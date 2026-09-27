@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "FundoFlow — Sync Pipeline Data Flow",
+    "output": "fundoflow-sync-dataflow.html",
+    "viewBox": [1080, 560],
+    "quality_profile": "showcase"
+  },
+  "stages": [
+    { "label": "Local (offline)" },
+    { "label": "Ingest" },
+    { "label": "Queue" },
+    { "label": "Process" },
+    { "label": "Store" }
+  ],
+  "nodes": [
+    { "id": "vue-ui", "type": "frontend", "label": "Vue UI", "sublabel": "HarvestView", "stage": 0, "row": 0 },
+    { "id": "sqlite", "type": "database", "label": "Local SQLite", "sublabel": "sql.js + outbox", "stage": 0, "row": 1, "tag": "durable local" },
+    { "id": "http-api", "type": "backend", "label": "Hono HTTP API", "sublabel": "POST /api/v1/sync", "stage": 1, "row": 1, "tag": "Zod-validated" },
+    { "id": "sqs", "type": "messagebus", "label": "SQS Queue", "sublabel": "fundoflow-local-sync", "stage": 2, "row": 1, "tag": "long-poll" },
+    { "id": "worker", "type": "backend", "label": "Worker", "sublabel": "Node.js · LWW", "stage": 3, "row": 1, "tag": "deterministic merge" },
+    { "id": "ddb", "type": "database", "label": "DynamoDB", "sublabel": "4 tables · GSIs", "stage": 4, "row": 1, "tag": "source of truth" }
+  ],
+  "flows": [
+    { "id": "ui-write", "from": "vue-ui", "to": "sqlite", "label": "INSERT", "classification": "synced_at=NULL", "variant": "emphasis", "labelDy": 28 },
+    { "id": "ui-enqueue", "from": "sqlite", "to": "http-api", "label": "POST /sync", "classification": "durable handoff", "variant": "emphasis" },
+    { "id": "enqueue-sqs", "from": "http-api", "to": "sqs", "label": "SendMessage", "classification": "async fanout", "variant": "default" },
+    { "id": "deliver", "from": "sqs", "to": "worker", "label": "ReceiveMessage", "classification": "async drain", "variant": "default", "labelDy": -28 },
+    { "id": "worker-write", "from": "worker", "to": "ddb", "label": "PutItem", "classification": "LWW winner", "variant": "emphasis", "labelDy": -28 },
+    { "id": "ack", "from": "worker", "to": "sqs", "label": "DeleteMessage", "classification": "ack after write", "variant": "default", "labelDy": 48 }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Push path",
+      "items": [
+        "Every mutation is durable in SQLite before any network call",
+        "Outbox decouples user-perceived latency from sync latency",
+        "Worker ack only after DeleteMessage — no data loss on crash"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Pull path (separate)",
+      "items": [
+        "GET /workers/changes?since=... pulls server changes since last sync",
+        "Server is treated as truth for worker records when timestamps tie",
+        "Pull never deletes local rows — soft-delete propagation via LWW"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "LWW at the merge point",
+      "items": [
+        "Pure function: same inputs always produce the same winner",
+        "Tie-breaks to existing — no churn on identical timestamps",
+        "Soft-deletes propagate through the same LWW logic"
+      ]
+    }
+  ]
+}

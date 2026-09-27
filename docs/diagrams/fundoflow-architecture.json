@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "FundoFlow — System Architecture",
+    "output": "fundoflow-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "sqljs",
+      "type": "database",
+      "label": "Local SQLite",
+      "sublabel": "sql.js + localStorage",
+      "pos": [40, 100],
+      "size": [200, 64]
+    },
+    {
+      "id": "browser-fe",
+      "type": "frontend",
+      "label": "Vue 3 Frontend",
+      "sublabel": "Vite · Pinia · Tailwind",
+      "pos": [40, 220],
+      "size": [200, 64]
+    },
+    {
+      "id": "outbox",
+      "type": "database",
+      "label": "Outbox",
+      "sublabel": "pending sync batches",
+      "pos": [40, 360],
+      "size": [200, 64]
+    },
+    {
+      "id": "hono",
+      "type": "backend",
+      "label": "Hono HTTP Server",
+      "sublabel": "Node.js :3001",
+      "pos": [340, 180],
+      "size": [200, 64],
+      "tag": "Zod-validated"
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "SQS Worker",
+      "sublabel": "Node.js · long-poll",
+      "pos": [340, 360],
+      "size": [200, 64],
+      "tag": "LWW conflict resolver"
+    },
+    {
+      "id": "sqs",
+      "type": "messagebus",
+      "label": "SQS Queue",
+      "sublabel": "fundoflow-local-sync",
+      "pos": [620, 180],
+      "size": [200, 64]
+    },
+    {
+      "id": "dlq",
+      "type": "messagebus",
+      "label": "Dead Letter Queue",
+      "sublabel": "fundoflow-local-sync-dlq",
+      "pos": [900, 80],
+      "size": [200, 64]
+    },
+    {
+      "id": "ddb",
+      "type": "database",
+      "label": "DynamoDB",
+      "sublabel": "LocalStack 0.14.5",
+      "pos": [900, 280],
+      "size": [240, 100],
+      "tag": "tenants · workers · harvest_logs · sync_batches"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Browser (offline-first)",
+      "wraps": ["sqljs", "browser-fe", "outbox"]
+    },
+    {
+      "kind": "region",
+      "label": "FundoFlow Backend (Node.js host)",
+      "wraps": ["hono", "worker"]
+    },
+    {
+      "kind": "region",
+      "label": "LocalStack (Docker)",
+      "wraps": ["sqs", "dlq", "ddb"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "ui-to-sqljs",
+      "from": "browser-fe",
+      "to": "sqljs",
+      "label": "read/write",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "ui-to-outbox",
+      "from": "browser-fe",
+      "to": "outbox",
+      "label": "enqueue",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 36
+    },
+    {
+      "id": "push-sync",
+      "from": "outbox",
+      "to": "hono",
+      "label": "POST /api/v1/sync",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "pull-sync",
+      "from": "hono",
+      "to": "sqljs",
+      "label": "GET /workers/changes",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "right",
+      "labelDy": -56
+    },
+    {
+      "id": "hono-to-sqs",
+      "from": "hono",
+      "to": "sqs",
+      "label": "SendMessage",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "worker-receives-sqs",
+      "from": "worker",
+      "to": "sqs",
+      "label": "ReceiveMessage (long-poll)",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "worker-to-ddb",
+      "from": "worker",
+      "to": "ddb",
+      "label": "PutItem + LWW",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -32
+    },
+    {
+      "id": "sqs-to-dlq",
+      "from": "sqs",
+      "to": "dlq",
+      "label": "after maxReceiveCount",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "right",
+      "labelDy": -68
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Offline-first",
+      "items": [
+        "Every mutation lands in local SQLite before any network call",
+        "Outbox decouples user actions from sync availability",
+        "App stays usable with no connectivity; sync resumes when back online"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Async by design",
+      "items": [
+        "HTTP server returns 202 immediately, processing happens out-of-band",
+        "SQS absorbs burst when many devices sync at end of shift",
+        "DLQ catches poisoned messages without blocking the main flow"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Conflict-safe",
+      "items": [
+        "Client-generated UUIDs avoid server-id dependency offline",
+        "Last-Write-Wins on updated_at is deterministic and idempotent",
+        "Soft deletes (deleted_at) propagate through re-sync without data loss"
+      ]
+    }
+  ]
+}
