@@ -1,0 +1,17 @@
+{
+  "name": "@fundoflow/infra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LocalStack + Terraform para DynamoDB, SQS, Lambda y EventBridge",
+  "scripts": {
+    "up": "make up",
+    "down": "make down",
+    "logs": "make logs",
+    "init": "make init",
+    "plan": "make plan",
+    "apply": "make apply",
+    "destroy": "make destroy",
+    "smoke": "make smoke",
+    "shell": "make shell"
+  }
+}

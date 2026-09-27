@@ -1,0 +1,27 @@
+{
+  "name": "fundoflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FundoFlow — SaaS de trazabilidad agrícola offline-first con Stripe Metered Billing",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "infra:up": "pnpm --filter @fundoflow/infra run up",
+    "infra:down": "pnpm --filter @fundoflow/infra run down",
+    "infra:logs": "pnpm --filter @fundoflow/infra run logs",
+    "infra:plan": "pnpm --filter @fundoflow/infra run plan",
+    "infra:apply": "pnpm --filter @fundoflow/infra run apply",
+    "infra:destroy": "pnpm --filter @fundoflow/infra run destroy",
+    "backend:dev": "pnpm --filter @fundoflow/backend run dev",
+    "backend:build": "pnpm --filter @fundoflow/backend run build",
+    "backend:test": "pnpm --filter @fundoflow/backend run test",
+    "frontend:dev": "pnpm --filter @fundoflow/frontend run dev",
+    "frontend:build": "pnpm --filter @fundoflow/frontend run build"
+  },
+  "devDependencies": {
+    "typescript": "5.6.3"
+  }
+}

@@ -1,0 +1,4 @@
+packages:
+  - "app-fundoflow-backend"
+  - "app-fundoflow-frontend"
+  - "app-fundoflow-infra"

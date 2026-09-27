@@ -1,0 +1,6 @@
+dist/
+.env
+.env.local
+*.log
+coverage/
+.vitest-cache/

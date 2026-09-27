@@ -1,0 +1,32 @@
+name: fundoflow-infra
+
+services:
+  localstack:
+    image: localstack/localstack:0.14.5
+    container_name: fundoflow-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=dynamodb,sqs,lambda,events,apigateway,iam,sts,logs
+      - DEBUG=0
+      - PERSISTENCE=1
+      - DEFAULT_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
+      - LAMBDA_EXECUTOR=local
+      - PROVIDER_OVERRIDE_LAMBDA=1
+      - DATA_DIR=/var/lib/localstack/data
+    volumes:
+      - ./localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks:
+      - fundoflow-net
+
+networks:
+  fundoflow-net:
+    driver: bridge

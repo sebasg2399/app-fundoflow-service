@@ -1,0 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
+  body {
+    @apply bg-cream font-sans text-ink antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-forest text-white hover:bg-forest-700;
+  }
+  .btn-secondary {
+    @apply btn border border-forest-200 bg-white text-forest hover:bg-forest-50;
+  }
+  .btn-ghost {
+    @apply btn text-forest hover:bg-forest-50;
+  }
+  .card {
+    @apply rounded-lg border border-forest-100 bg-white shadow-card;
+  }
+  .input {
+    @apply w-full rounded-md border border-forest-200 bg-white px-3 py-2.5 text-sm placeholder:text-muted focus:border-forest focus:outline-none focus:ring-2 focus:ring-forest-200;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+  .chip-active {
+    @apply chip bg-forest text-white;
+  }
+  .chip-idle {
+    @apply chip border border-forest-200 bg-white text-forest hover:bg-forest-50;
+  }
+  .nav-item {
+    @apply flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-forest-100 transition-colors hover:bg-forest-700;
+  }
+  .nav-item-active {
+    @apply bg-forest-700 text-white;
+  }
+}
