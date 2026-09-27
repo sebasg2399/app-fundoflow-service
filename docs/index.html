@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FundoFlow — Diagrams</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --forest: #0f4c3a;
+        --forest-50: #e6f0ec;
+        --forest-100: #c2d9cd;
+        --forest-700: #0c3e30;
+        --tan: #d4a574;
+        --ember: #f4a261;
+        --cream: #fafaf7;
+        --ink: #191c1b;
+        --muted: #6b7672;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--cream);
+        color: var(--ink);
+        font-family: Inter, system-ui, sans-serif;
+        font-feature-settings: "ss01", "cv11";
+        min-height: 100vh;
+      }
+      header {
+        background: var(--forest);
+        color: white;
+        padding: 3rem 2rem 4rem;
+      }
+      .wrap { max-width: 960px; margin: 0 auto; }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+      .brand-mark {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+      }
+      .brand-mark svg { width: 22px; height: 22px; }
+      h1 {
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        font-size: 2.4rem;
+        font-weight: 700;
+        margin: 1.5rem 0 0.5rem;
+        line-height: 1.15;
+      }
+      .lede {
+        max-width: 640px;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1.05rem;
+        line-height: 1.5;
+        margin: 0;
+      }
+      .meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .meta a { color: rgba(255, 255, 255, 0.85); text-decoration: underline; text-underline-offset: 3px; }
+      main {
+        max-width: 960px;
+        margin: -2rem auto 4rem;
+        padding: 0 2rem;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.25rem;
+      }
+      a.card {
+        display: block;
+        background: white;
+        border: 1px solid var(--forest-100);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 1px 2px rgba(15, 76, 58, 0.04), 0 4px 12px rgba(15, 76, 58, 0.06);
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+      a.card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(15, 76, 58, 0.06), 0 12px 24px rgba(15, 76, 58, 0.12);
+      }
+      .pill {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+      .pill.architecture { background: var(--forest-50); color: var(--forest-700); }
+      .pill.sequence { background: #fde7d3; color: #8a4b1a; }
+      .pill.dataflow { background: #d8ecf3; color: #1a5e7a; }
+      .card h2 {
+        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+      }
+      .card p {
+        font-size: 0.92rem;
+        line-height: 1.55;
+        color: var(--muted);
+        margin: 0 0 1rem;
+      }
+      .card .arrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--forest);
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      footer {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 2rem;
+        color: var(--muted);
+        font-size: 0.82rem;
+        border-top: 1px solid var(--forest-100);
+      }
+      footer a { color: var(--forest); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <div class="brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22c4-3 7-7 7-12a7 7 0 10-14 0c0 5 3 9 7 12z" />
+              <path d="M12 12c-2-2-2-5 0-7 2 2 2 5 0 7z" />
+            </svg>
+          </span>
+          FundoFlow
+        </div>
+        <h1>Architecture diagrams</h1>
+        <p class="lede">
+          Interactive diagrams generated with <a href="https://github.com/anomalyco/opencode/tree/main/.opencode/skills/archify" style="color:white">Archify</a>.
+          Open any of them to zoom, pan, search, focus a relationship, switch themes, or export.
+        </p>
+        <div class="meta">
+          <span>Source specs committed alongside the HTML</span>
+          <span>·</span>
+          <a href="https://github.com/sebasg2399/app-fundoflow-service">github.com/sebasg2399/app-fundoflow-service</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <a class="card" href="diagrams/fundoflow-architecture.html">
+          <span class="pill architecture">architecture</span>
+          <h2>System architecture</h2>
+          <p>
+            Component map with three runtime regions — browser (offline-first),
+            FundoFlow backend (Node.js host), and LocalStack — plus the main
+            data and control flow between them.
+          </p>
+          <span class="arrow">Open diagram →</span>
+        </a>
+
+        <a class="card" href="diagrams/fundoflow-sync-write-sequence.html">
+          <span class="pill sequence">sequence</span>
+          <h2>Sync write path</h2>
+          <p>
+            End-to-end sequence of a single harvest log from the supervisor's tap
+            to a persisted row in DynamoDB. Captures the durability handoff
+            (SQLite → outbox → SQS) and the LWW resolver step inside the worker.
+          </p>
+          <span class="arrow">Open diagram →</span>
+        </a>
+
+        <a class="card" href="diagrams/fundoflow-sync-dataflow.html">
+          <span class="pill dataflow">dataflow</span>
+          <h2>Sync pipeline data flow</h2>
+          <p>
+            Stage-by-stage data flow chart of the push pipeline: Local → Ingest
+            → Queue → Process → Store. The pull path is documented separately
+            because it shares corridors with the push path.
+          </p>
+          <span class="arrow">Open diagram →</span>
+        </a>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        Diagrams rendered with Archify (showcase profile, 9/9 checks each).
+        To regenerate: <code>node ~/.agents/skills/archify/bin/archify.mjs deliver &lt;type&gt; docs/diagrams/*.json docs/diagrams/*.html --quality showcase</code>.
+      </div>
+    </footer>
+  </body>
+</html>
